@@ -1,0 +1,70 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ template "prefix" . }}-elasticsearch
+  labels:
+    app: {{ .Values.appNameLabel }}
+spec:
+  ports:
+  - name: http
+    protocol: TCP
+    port: 80
+    targetPort: 9200
+  selector:
+    role: {{ template "prefix" . }}-elasticsearch
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ template "prefix" . }}-elasticsearch-yml
+data:
+{{ include "elasticsearch_yml" . | indent 2 }}
+  roles.yml: |-
+{{ .Files.Get "config/roles.yml" | indent 4 }}
+  role_mapping.yml: |-
+{{ .Files.Get "config/role_mapping.yml" | indent 4 }}
+---
+apiVersion: apps/v1beta1
+kind: Deployment
+metadata:
+  name: {{ template "prefix" . }}-elasticsearch
+  labels:
+    app: {{ .Values.appNameLabel }}
+spec:
+  template:
+    metadata:
+      labels:
+        role: {{ template "prefix" . }}-elasticsearch
+    spec:
+      containers:
+      - name: {{ template "prefix" . }}-elasticsearch
+        image: elasticsearch:{{ .Values.elasticVersion }}
+        ports:
+          - containerPort: 9200
+        resources:
+          requests:
+            memory: "2048M"
+            cpu: "1000m"
+          limits:
+            memory: "2048M"
+            cpu: "4000m"
+        imagePullPolicy: {{ .Values.elasticSearchImagePullPolicy }}
+        volumeMounts:
+          - mountPath: /usr/share/elasticsearch/config/elasticsearch.yml
+            subPath: elasticsearch.yml
+            name: {{ template "prefix" . }}-elasticsearch-yml
+          - mountPath: /usr/share/elasticsearch/config/roles.yml
+            subPath: roles.yml
+            name: {{ template "prefix" . }}-elasticsearch-yml
+          - mountPath: /usr/share/elasticsearch/config/role_mapping.yml
+            subPath: role_mapping.yml
+            name: {{ template "prefix" . }}-elasticsearch-yml
+        env:
+          - name: ES_JAVA_OPTS
+            value: -Xms1024m -Xmx1024m
+          - name: discovery.type
+            value: single-node
+      volumes:
+      - name: {{ template "prefix" . }}-elasticsearch-yml
+        configMap:
+          name: {{ template "prefix" . }}-elasticsearch-yml

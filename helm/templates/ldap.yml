@@ -1,0 +1,44 @@
+{{ if .Values.withXpackSecurity }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: reportingapp-ldap
+spec:
+  type: NodePort
+  role: reportingapp-ldap
+  selector:
+    app: reportingapp-ldap
+  ports:
+  - port: 10389
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: reportingapp-ldap-ssl
+spec:
+  type: NodePort
+  role: reportingapp-ldap
+  selector:
+    app: reportingapp-ldap
+  ports:
+  - port: 10636
+---
+apiVersion: apps/v1beta1
+kind: Deployment
+metadata:
+  name: reportingapp-ldap
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: reportingapp-ldap
+    role: reportingapp-ldap
+    spec:
+      containers:
+      - image: openmicroscopy/apacheds:0.6.0
+        name: reportingapp-ldap
+        env:
+        - name: APACHEDS_INSTANCE
+          value: test-ldap
+{{ end }}

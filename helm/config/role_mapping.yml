@@ -1,0 +1,8 @@
+admin:
+  - "uid=admin,ou=users,ou=system"
+ingestion:
+  - "uid=ingestion,ou=users,ou=system"
+guest:
+  - "uid=guest,ou=users,ou=system"
+manager:
+  - "uid=manager,ou=users,ou=system"

@@ -1,0 +1,66 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ template "prefix" . }}-api-report
+  labels:
+    app: {{ .Values.appNameLabel }}
+spec:
+  ports:
+    - name: http
+      protocol: TCP
+      port: 80
+      targetPort: 8000
+  selector:
+    role: {{ template "prefix" . }}-api-report
+---
+apiVersion: apps/v1beta1
+kind: Deployment
+metadata:
+  name: {{ template "prefix" . }}-api-report
+  labels:
+    app: {{ .Values.appNameLabel }}
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        role: {{ template "prefix" . }}-api-report
+    spec:
+      containers:
+      - name: api-report
+        image: {{ .Values.dockerRegistry}}/api-report:{{ template "gbVersion" . }}
+        ports:
+          - containerPort: 8000
+        resources:
+          requests:
+            memory: "500M"
+            cpu: "100m"
+          limits:
+            memory: "500M"
+            cpu: "500m"
+        imagePullPolicy: {{ .Values.imagePullPolicy }}
+        env:
+          - name: ROCKET_ENV
+            value: production
+          - name: WORK_DIR
+            value: work_dir
+          - name: RUST_LOG
+            value: "api_report=info"
+        volumeMounts:
+          - mountPath: /Rocket.toml
+            name: {{ template "prefix" . }}-rocket-toml
+            subPath: Rocket.toml
+      volumes:
+      - name: {{ template "prefix" . }}-rocket-toml
+        configMap:
+          name: {{ template "prefix" . }}-rocket-toml
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ template "prefix" . }}-rocket-toml
+  labels:
+    app: {{ .Values.appNameLabel }}
+data:
+  Rocket.toml: |-
+{{ .Files.Get "config/Rocket.toml" | indent 4 }}

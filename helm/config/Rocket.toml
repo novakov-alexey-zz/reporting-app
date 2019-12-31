@@ -1,0 +1,10 @@
+[global.limits]
+forms = 32768
+
+[production]
+address = "0.0.0.0"
+port = 8000
+log = "critical"
+secret_key = "8Xui8SN4mI+7egV/9dlfYYLGQJeEx4+DwmSQLwDVXJg="
+# if tls is commented, then TLS is turned OFF
+#tls = { certs = "demokeys/server.cer", key = "demokeys/server.key" }

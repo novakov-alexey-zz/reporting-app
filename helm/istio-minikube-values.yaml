@@ -1,0 +1,13 @@
+gateways:
+  istio-ingressgateway:
+    type: NodePort
+  istio-egressgateway:
+    type: NodePort
+
+grafana:
+  enabled: true
+
+kiali:
+  enabled: true
+  dashboard:
+    grafanaURL: http://localhost:3000 # check this time

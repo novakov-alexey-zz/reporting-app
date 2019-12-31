@@ -1,0 +1,57 @@
+version: '2.2'
+services:
+
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:6.4.0
+    container_name: elasticsearch
+    environment:
+      - "ES_JAVA_OPTS=-Xms1024m -Xmx1024m"
+      - "discovery.type=single-node"
+    mem_limit: 2g
+    volumes:
+      - ./config/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml
+      - ./esdata:/usr/share/elasticsearch/data
+    ports:
+      - 9200:9200
+
+  gen-data:
+    image: gen-data:0.1.0-SNAPSHOT
+    container_name: gen-data
+    mem_limit: 3g
+    environment:
+      JAVA_OPTS: "-XX:+UnlockExperimentalVMOptions -XX:+UseCGroupMemoryLimitForHeap"
+      COUNT: 100000
+      BATCH_SIZE: 5000
+      ES_HOST: elasticsearch
+      ES_PORT: 9200
+    depends_on:
+      - elasticsearch
+
+  api-search:
+    image: api-search:0.1.0-SNAPSHOT
+    container_name: api-search
+    mem_limit: 3g
+    environment:
+      APP_CONFIG_PATH: /opt/conf/api-search.conf
+      SSL_KS_PWD: "test12345"
+      SSL_KS_NAME: "keystore.jks"
+    volumes:
+      - ./config/api-search.conf:/opt/conf/api-search.conf
+      - ./config/logback.xml:/opt/conf/logback.xml
+    ports:
+      - 9000:9000
+      - 9080:9080
+
+  api-report:
+    image: api-report:0.1.0-SNAPSHOT
+    container_name: api-report
+    environment:
+      ROCKET_ADDRESS: 0.0.0.0
+      ROCKET_ENV: "production"
+      WORK_DIR: "work_dir"
+      RUST_LOG: "api_report=info"
+    volumes:
+      - ../api-report/target/work_dir:/work_dir
+      - ../api-report/templates:/templates
+    ports:
+      - 8000:8000

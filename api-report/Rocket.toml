@@ -1,0 +1,15 @@
+[global.limits]
+forms = 32768
+
+[production]
+address = "0.0.0.0"
+port = 8000
+log = "critical"
+secret_key = "8Xui8SN4mI+7egV/9dlfYYLGQJeEx4+DwmSQLwDVXJg="
+tls = { certs = "demokeys/server.cer", key = "demokeys/server.key" }
+
+[development]
+address = "localhost"
+port = 8000
+log = "debug"
+tls = { certs = "demokeys/server.cer", key = "demokeys/server.key" }

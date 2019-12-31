@@ -1,0 +1,73 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ template "prefix" . }}-api-search
+  labels:
+    app: {{ .Values.appNameLabel }}
+spec:
+  ports:
+  - name: http
+    protocol: TCP
+    port: 80
+    targetPort: 9080
+  - name: https
+    protocol: TCP
+    port: 443
+    targetPort: 9000
+  selector:
+    role: {{ template "prefix" . }}-api-search
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ template "prefix" . }}-api-search-conf
+data:
+{{ include "api_search_conf" . | indent 2 }}
+---
+apiVersion: apps/v1beta1
+kind: Deployment
+metadata:
+  name: {{ template "prefix" . }}-api-search
+  labels:
+    app: {{ .Values.appNameLabel }}
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        role: {{ template "prefix" . }}-api-search
+      annotations:
+        configHash: {{ include "api_search_conf" . | sha256sum }}
+    spec:
+      containers:
+      - name: api-search
+        image: {{ .Values.dockerRegistry}}/api-search:{{ template "gbVersion" . }}
+        ports:
+          - containerPort: 9080
+            name: http
+          - containerPort: 9000
+            name: https
+        resources:
+          requests:
+            memory: "500M"
+            cpu: "100m"
+          limits:
+            memory: "500M"
+            cpu: "500m"
+        imagePullPolicy: {{ .Values.imagePullPolicy }}
+        env:
+          - name: APP_CONFIG_PATH
+            value: /opt/conf/api-search.conf
+          - name: JAVA_OPTS
+            value: "-XX:+UnlockExperimentalVMOptions -XX:+UseCGroupMemoryLimitForHeap"
+          - name: SSL_KS_PWD
+            value: "test12345"
+          - name: SSL_KS_NAME
+            value: "keystore.jks"
+        volumeMounts:
+          - mountPath: /opt/conf/
+            name: {{ template "prefix" . }}-api-search-conf
+      volumes:
+      - name: {{ template "prefix" . }}-api-search-conf
+        configMap:
+          name: {{ template "prefix" . }}-api-search-conf

@@ -1,0 +1,119 @@
+{
+  "template_name": "app-report",
+  "user_params": {
+    "inquiry_date": "21.03.2018",
+    "ticket_number": "221232",
+    "last_update_date": "29.04.2018",
+    "master_data": [
+      {
+        "category": "contact",
+        "fields": [
+          {
+            "name": "salutation",
+            "content": "Herr"
+          },
+          {
+            "name": "academic_degree",
+            "content": "Dipl-Ing."
+          },
+          {
+            "name": "last_name",
+            "content": "Mustermann"
+          },
+          {
+            "name": "first_name",
+            "content": "Max"
+          },
+          {
+            "name": "address",
+            "content": "Musterstraße 1"
+          },
+          {
+            "name": "post_code",
+            "content": "123456"
+          },
+          {
+            "name": "city",
+            "content": "Musterstadt"
+          },
+          {
+            "name": "birth_day",
+            "content": "01.01.1960"
+          },
+          {
+            "name": "private_email",
+            "content": "max@mustermann.de"
+          },
+          {
+            "name": "private_phone",
+            "content": "+49 69 9 4711-0815"
+          },
+          {
+            "name": "private_mobile",
+            "content": "+49 151 1 4711-0815"
+          }
+        ]
+      },
+      {
+        "category": "itusage",
+        "fields": [
+          {
+            "name": "user_id",
+            "content": "DSGVOABCXYZ"
+          },
+          {
+            "name": "email",
+            "content": "max@mustermann.de"
+          },
+          {
+            "name": "registered",
+            "content": "01.01.2016"
+          },
+          {
+            "name": "last_login",
+            "content": "31.08.2018 23:59:59"
+          }
+        ]
+      },
+      {
+        "category": "banking",
+        "fields": [
+          {
+            "name": "iban",
+            "content": "DE99 1234 5678 9999 9999 99"
+          },
+          {
+            "name": "bic",
+            "content": "DE999999XXX"
+          }
+        ]
+      },
+      {
+        "category": "bills",
+        "fields": [
+          {
+            "name": "id",
+            "content": "08154711#002"
+          },
+          {
+            "name": "amount",
+            "content": "815,00€"
+          }
+        ]
+      },
+      {
+        "category": "bills",
+        "fields": [
+          {
+            "name": "id",
+            "content": "08154711#001"
+          },
+          {
+            "name": "amount",
+            "content": "47,11€"
+          }
+        ]
+      }
+    ]
+  }
+}

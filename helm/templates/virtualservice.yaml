@@ -1,0 +1,32 @@
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: reportingapp
+  labels:
+    app: {{ .Values.appNameLabel }}
+spec:
+  hosts:
+    - "*"
+  gateways:
+    - gb-gateway
+  http:
+    - match:
+        - uri:
+            prefix: /search/
+      rewrite:
+        uri: "/"
+      route:
+        - destination:
+            host: gb-api-search
+            port:
+              number: 80
+    - match:
+        - uri:
+            prefix: /report/
+      rewrite:
+        uri: "/"
+      route:
+        - destination:
+            host: gb-api-report
+            port:
+              number: 80

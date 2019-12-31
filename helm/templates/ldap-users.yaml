@@ -1,0 +1,63 @@
+{{ if .Values.withXpackSecurity }}
+apiVersion: v1
+kind: Pod
+metadata:
+  name: ldap-users
+  labels:
+    purpose: ldap-users
+spec:
+  containers:
+  - name: ldap-users
+    image: mbentley/ldap-utils
+    command:
+    - /bin/sh
+    - -c
+    - set -e; for filename in /tmp/ldap-users/*.ldif; do /usr/bin/ldapadd -x -h reportingapp-ldap -p 10389 -f $filename; done
+    volumeMounts:
+    - mountPath: /tmp/ldap-users
+      name: ldap-users-definitions
+  restartPolicy: OnFailure
+  volumes:
+  - name: ldap-users-definitions
+    configMap:
+      name: ldap-users-definitions
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: ldap-users-definitions
+data:
+  user1.ldif: |
+    dn: uid=user1,ou=users,ou=system
+    objectClass: top
+    objectClass: person
+    objectClass: organizationalPerson
+    objectClass: inetOrgPerson
+    cn: user1
+    sn: user1
+    uid: user1
+    initials: 94363
+    userPassword: secret
+  user2.ldif: |
+    dn: uid=user2,ou=users,ou=system
+    objectClass: top
+    objectClass: person
+    objectClass: organizationalPerson
+    objectClass: inetOrgPerson
+    cn: user2
+    sn: user2
+    uid: user2
+    initials: 94288
+    userPassword: secret
+  user3.ldif: |
+    dn: uid=user3,ou=users,ou=system
+    objectClass: top
+    objectClass: person
+    objectClass: organizationalPerson
+    objectClass: inetOrgPerson
+    cn: user3
+    sn: user3
+    uid: user3
+    initials: 94280
+    userPassword: secret
+{{ end }}

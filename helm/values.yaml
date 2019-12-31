@@ -1,0 +1,13 @@
+# Set gbVersion from external parameter: `helm install --set gbVersion= ....`
+gbVersion: 0.1.0-SNAPSHOT
+
+imagePullPolicy: Always
+elasticSearchImagePullPolicy: IfNotPresent
+dockerRegistry: "minikube:5000"
+deployOn: ""
+
+# Elasticsearch
+elasticVersion: 6.5.4
+withXpackSecurity: false
+
+appNameLabel: "gb-demo"
